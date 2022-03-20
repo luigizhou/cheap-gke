@@ -40,9 +40,37 @@ resource "google_service_account_key" "kubeip-sa-key" {
   public_key_type    = "TYPE_X509_PEM_FILE"
 }
 
+resource "google_compute_address" "kubeip-address" {
+  provider = google-beta
+  region   = var.region
+  project  = var.project
+  name     = "kubeip-address"
+  labels = {
+    "kubeip" = google_container_cluster.main.name
+  }
+}
+
 resource "local_file" "kubeip-secret" {
   content = templatefile("${path.module}/tpl/kubeip-secret.tpl", {
     kubeip-serviceaccount = "${google_service_account_key.kubeip-sa-key.private_key}"
   })
   filename = "${path.module}/manifests/kubeip-secret.yaml"
 }
+
+resource "local_file" "kubeip-config" {
+  content = templatefile("${path.module}/tpl/kubeip-config.tpl", {
+    cluster-name = google_container_cluster.main.name,
+    node-pool    = google_container_node_pool.main.name
+  })
+  filename = "${path.module}/manifests/kubeip-config.yaml"
+}
+
+resource "local_file" "kubeip-deployment" {
+  content = templatefile("${path.module}/tpl/kubeip-deployment.tpl", {
+    cluster-name = google_container_cluster.main.name,
+    node-pool    = google_container_node_pool.main.name
+  })
+  filename = "${path.module}/manifests/kubeip-deployment.yaml"
+}
+
+

@@ -1,0 +1,3 @@
+kubeip-secret.yaml
+kubeip-deployment.yaml
+kubeip-config.yaml
