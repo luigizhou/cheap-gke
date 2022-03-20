@@ -13,6 +13,11 @@ resource "google_container_node_pool" "main" {
   cluster    = google_container_cluster.main.name
   node_count = 0
 
+  autoscaling {
+    min_node_count = 0
+    max_node_count = 1
+  }
+
   management {
     auto_repair  = true
     auto_upgrade = true
