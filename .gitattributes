@@ -1,2 +1,2 @@
 tf/terraform.tfstate* filter=git-crypt diff=git-crypt
-
+tf/terraform.tfvars filter=git-crypt diff=git-crypt
