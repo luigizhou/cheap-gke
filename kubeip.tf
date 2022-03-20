@@ -40,14 +40,9 @@ resource "google_service_account_key" "kubeip-sa-key" {
   public_key_type    = "TYPE_X509_PEM_FILE"
 }
 
-data "template_file" "kubeip-secret" {
-  template = file("${path.module}/tpl/kubeip-secret.tpl")
-  vars = {
-    kubeip-serviceaccount = "${google_service_account_key.kubeip-sa-key.private_key}"
-  }
-}
-
 resource "local_file" "kubeip-secret" {
-  content  = data.template_file.kubeip-secret
+  content = templatefile("${path.module}/tpl/kubeip-secret.tpl", {
+    kubeip-serviceaccount = "${google_service_account_key.kubeip-sa-key.private_key}"
+  })
   filename = "${path.module}/manifests/kubeip-secret.yaml"
 }
