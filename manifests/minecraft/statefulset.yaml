@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: minecraft
+  name: minecraft
+  namespace: minecraft
+spec:
+  replicas: 1
+  serviceName: default
+  selector:
+    matchLabels:
+      app: minecraft
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      hostNetwork: true
+      tolerations:
+      - key: main
+        value: "true"
+        effect: NoExecute
+      containers:
+        - name: atm6
+          image: busybox
+          image: luigizhou/all-the-mods-6:1.8.20
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /minecraft/world
+              name: data
+            - name: serverproperties
+              mountPath: /minecraft/server.properties
+              subPath: server.properties
+          resources:
+            requests:
+              cpu: 1
+              memory: 5Gi
+      volumes:
+      - name: serverproperties
+        configMap:
+          name: serverproperties
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

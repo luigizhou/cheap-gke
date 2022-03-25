@@ -68,7 +68,7 @@ resource "local_file" "kubeip-config" {
 resource "local_file" "kubeip-deployment" {
   content = templatefile("${path.module}/tpl/kubeip-deployment.tpl", {
     cluster-name = google_container_cluster.main.name,
-    node-pool    = google_container_node_pool.main.name
+    node-pool    = google_container_node_pool.setup.name
   })
   filename = "${path.module}/manifests/kubeip-deployment.yaml"
 }
